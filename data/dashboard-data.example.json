@@ -1,0 +1,100 @@
+{
+  "businessName": "Legacy4Sports",
+  "currency": "CAD",
+  "province": "ON",
+  "hstRate": 0.13,
+  "fiscalYearEnd": "2026-12-31",
+  "taxSetAsideRate": 0.25,
+  "hstFilingFrequency": "annual",
+  "periods": {
+    "monthToDate": { "income": 100.0, "expenses": 40.0 },
+    "quarterToDate": { "income": 300.0, "expenses": 120.0 },
+    "yearToDate": { "income": 1200.0, "expenses": 480.0 }
+  },
+  "hst": {
+    "collected": 156.0,
+    "itcs": 62.4
+  },
+  "expensesByCategory": [
+    { "category": "Advertising", "amount": 20.0 },
+    { "category": "Meals and entertainment (50%)", "amount": 40.0 },
+    { "category": "Insurance", "amount": 30.0 },
+    { "category": "Interest and bank charges", "amount": 10.0 },
+    { "category": "Office supplies", "amount": 25.0 },
+    { "category": "Professional fees", "amount": 50.0 },
+    { "category": "Rent", "amount": 80.0 },
+    { "category": "Repairs and maintenance", "amount": 15.0 },
+    { "category": "Salaries/subcontractors", "amount": 60.0 },
+    { "category": "Travel", "amount": 20.0 },
+    { "category": "Telephone and utilities", "amount": 15.0 },
+    { "category": "Vehicle", "amount": 25.0 },
+    { "category": "Equipment/capital", "amount": 30.0 },
+    { "category": "Software and subscriptions", "amount": 20.0 },
+    { "category": "Sports equipment/inventory", "amount": 15.0 },
+    { "category": "League/tournament fees", "amount": 10.0 },
+    { "category": "Uniforms", "amount": 5.0 },
+    { "category": "Facility rentals", "amount": 8.0 },
+    { "category": "Other", "amount": 2.0 }
+  ],
+  "monthly": [
+    { "month": "2026-01", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-02", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-03", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-04", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-05", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-06", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-07", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-08", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-09", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-10", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-11", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 },
+    { "month": "2026-12", "income": 100.0, "expenses": 40.0, "hstCollected": 13.0, "hstItcs": 5.2 }
+  ],
+  "topVendors": [
+    { "label": "EXAMPLE: Facility rentals", "amount": 80.0 },
+    { "label": "EXAMPLE: Professional services", "amount": 50.0 },
+    { "label": "EXAMPLE: Insurance", "amount": 30.0 }
+  ],
+  "topCustomers": [
+    { "label": "EXAMPLE: League registrations", "amount": 400.0 },
+    { "label": "EXAMPLE: Tournament entries", "amount": 300.0 },
+    { "label": "EXAMPLE: Uniform orders", "amount": 200.0 }
+  ],
+  "cashFlow": {
+    "bankBalance": 2500.0,
+    "inflows": 1200.0,
+    "outflows": 480.0
+  },
+  "receivables": [
+    {
+      "reference": "EXAMPLE-INV-001",
+      "description": "EXAMPLE placeholder registration invoice",
+      "issuedOn": "2026-01-15",
+      "dueOn": "2026-02-14",
+      "amount": 113.0,
+      "status": "open"
+    },
+    {
+      "reference": "EXAMPLE-INV-002",
+      "description": "EXAMPLE placeholder tournament invoice",
+      "issuedOn": "2026-03-01",
+      "dueOn": "2026-03-31",
+      "amount": 56.5,
+      "status": "partial"
+    }
+  ],
+  "needsReview": [
+    {
+      "date": "2026-01-20",
+      "description": "EXAMPLE uncategorized card charge",
+      "amount": 12.34
+    }
+  ],
+  "missingReceipts": [
+    {
+      "date": "2026-01-21",
+      "description": "EXAMPLE purchase missing a receipt",
+      "amount": 9.99
+    }
+  ]
+}

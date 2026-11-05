@@ -1,0 +1,15 @@
+{
+  "name": "legacy4sports-dashboard",
+  "private": true,
+  "description": "Encrypted static finance dashboard for Legacy4Sports. Rebuild with build/build.mjs.",
+  "type": "module",
+  "scripts": {
+    "build": "node build/build.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "staticrypt": "3.5.4"
+  }
+}
