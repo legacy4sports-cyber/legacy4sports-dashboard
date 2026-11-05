@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="built-at" content="__BUILT_AT__" />
+    <title>Legacy4Sports finance dashboard</title>
+    <style>
+      :root {
+        --bg: #f3efe6;
+        --ink: #1c2622;
+        --muted: #5e6a63;
+        --card: #fffdf8;
+        --line: #e4dccb;
+        --accent: #0e6b5c;
+        --accent-soft: #e5f3ef;
+        --expense: #8f3d32;
+        --expense-soft: #f8ebe7;
+        --warn: #8a5a12;
+        --warn-soft: #f8f0dc;
+        --shadow: 0 1px 2px rgba(40, 32, 16, 0.04), 0 8px 24px rgba(40, 32, 16, 0.05);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body { margin: 0; padding: 0; }
+
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font: 16px/1.45 "Segoe UI", "Helvetica Neue", sans-serif;
+      }
+
+      .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 56px; }
+
+      h1, h2, h3, p { margin: 0; }
+
+      h1 { font-size: 1.85rem; letter-spacing: -0.03em; line-height: 1.1; }
+
+      h2 { font-size: 1.15rem; letter-spacing: -0.02em; }
+
+      h3 { font-size: 1rem; margin-bottom: 4px; }
+
+      .eyebrow {
+        margin: 0 0 6px;
+        color: var(--accent);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .lede, .section-note, .muted-note { color: var(--muted); }
+
+      .lede { margin-top: 6px; }
+
+      .section-note { margin: 4px 0 12px; }
+
+      .muted-note { margin-top: 4px; font-size: 0.92rem; }
+
+      .hero {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 16px;
+      }
+
+      .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+      .btn {
+        appearance: none;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #fff;
+        border-radius: 999px;
+        min-height: 44px;
+        padding: 10px 16px;
+        font: inherit;
+        font-weight: 650;
+        cursor: pointer;
+      }
+
+      .btn.secondary { background: transparent; color: var(--accent); }
+
+      .btn:hover { filter: brightness(0.97); }
+
+      .btn:focus-visible, summary:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      section { margin-top: 22px; }
+
+      .grid-2, .grid-3 { display: grid; gap: 12px; }
+
+      .card, .grid-2 > *, .grid-3 > * { min-width: 0; }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .banner { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+      .banner .eyebrow { color: #d7f3ec; }
+
+      .banner-date { margin-top: 4px; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+
+      .stat { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; }
+
+      .stat span { color: var(--muted); }
+
+      .stat strong, .num { font-variant-numeric: tabular-nums; font-weight: 650; }
+
+      .stat.net { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 8px; }
+
+      .stat.net strong { font-size: 1.25rem; }
+
+      .num.pos { color: var(--accent); }
+
+      .num.neg { color: var(--expense); }
+
+      .empty {
+        margin: 12px 0 0;
+        padding: 22px 12px;
+        text-align: center;
+        color: var(--muted);
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        background: #faf7f1;
+      }
+
+      .card-head, .cat-top, .dl-title-row, .legend {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .card-head, .cat-top { justify-content: space-between; }
+
+      .count {
+        min-width: 28px;
+        height: 28px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: inline-grid;
+        place-items: center;
+        font-weight: 700;
+      }
+
+      .cat-layout { display: grid; gap: 8px 18px; }
+
+      .donut-wrap { position: relative; width: 200px; height: 200px; margin: 4px auto; }
+
+      .donut-wrap svg { width: 100%; height: 100%; display: block; }
+
+      .donut-center {
+        position: absolute;
+        inset: 48px;
+        display: grid;
+        place-items: center;
+        align-content: center;
+        text-align: center;
+      }
+
+      .donut-center span { color: var(--muted); font-size: 0.78rem; }
+
+      .empty-donut {
+        width: 180px;
+        height: 180px;
+        margin: 8px auto;
+        border-radius: 50%;
+        border: 18px solid #efe8d8;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        font-weight: 650;
+      }
+
+      .cat { display: flex; gap: 10px; padding: 8px 0; }
+
+      .swatch { width: 14px; height: 14px; margin-top: 4px; border-radius: 4px; flex: none; }
+
+      .cat-copy { flex: 1; min-width: 0; }
+
+      .name { overflow-wrap: anywhere; }
+
+      .track { height: 8px; margin-top: 6px; background: #efe8d8; border-radius: 999px; overflow: hidden; }
+
+      .fill { height: 100%; background: var(--accent); border-radius: 999px; }
+
+      .cat small { display: block; margin-top: 4px; color: var(--muted); }
+
+      .chart svg { width: 100%; height: auto; display: block; }
+
+      .legend { margin-top: 8px; }
+
+      .legend i { display: inline-block; width: 12px; height: 12px; margin-right: 6px; border-radius: 3px; }
+
+      .month-row, .dl {
+        display: grid;
+        gap: 4px 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .month-row { grid-template-columns: 1.3fr repeat(3, 1fr); }
+
+      .dl { grid-template-columns: 1fr auto; align-items: start; }
+
+      .dl time { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+      .dl.is-next { background: var(--accent-soft); margin: 0 -8px; padding: 10px 8px; border-radius: 10px; border-bottom: 0; }
+
+      .month-row span, .rank-label { overflow-wrap: anywhere; }
+
+      ol.ranked, ul.plain { list-style: none; margin: 8px 0 0; padding: 0; }
+
+      ol.ranked li {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .rank {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      ul.plain li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+
+      .item-title { overflow-wrap: anywhere; }
+
+      .pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #eeeae2;
+        color: var(--ink);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .pill.upcoming, .pill.open { background: var(--accent-soft); color: var(--accent); }
+
+      .pill.today, .pill.partial { background: var(--warn-soft); color: var(--warn); }
+
+      .pill.overdue { background: var(--expense-soft); color: var(--expense); }
+
+      .pill.passed { background: #eeeae2; color: var(--muted); }
+
+      .pill.next { background: var(--accent); color: #fff; }
+
+      details { margin-top: 8px; }
+
+      summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--muted); }
+
+      .group-note { margin-bottom: 8px; }
+
+      footer { margin-top: 28px; color: var(--muted); font-size: 0.92rem; }
+
+      footer p + p { margin-top: 8px; }
+
+      @media (min-width: 800px) {
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .cat-layout { grid-template-columns: 220px 1fr; align-items: start; }
+      }
+
+      @media (max-width: 560px) {
+        .month-row, .dl { grid-template-columns: 1fr; }
+        .actions { width: 100%; }
+        .actions .btn { flex: 1 1 180px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="hero">
+        <div>
+          <p class="eyebrow" id="eyebrow">Ontario</p>
+          <h1 id="business-name">Legacy4Sports</h1>
+          <p class="lede" id="lede"></p>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn" id="download-ledger">Ledger summary (CSV)</button>
+          <button type="button" class="btn secondary" id="download-hst">HST report (CSV)</button>
+        </div>
+      </header>
+
+      <section id="next-deadline" class="card banner" aria-live="polite"></section>
+
+      <section>
+        <h2>Profit</h2>
+        <p class="section-note">Income, expenses, and net profit. Net profit is income minus expenses.</p>
+        <div id="periods" class="grid-3"></div>
+      </section>
+
+      <section class="grid-2">
+        <article class="card" id="hst-card"></article>
+        <article class="card" id="tax-card"></article>
+      </section>
+
+      <section>
+        <h2>Expenses by category</h2>
+        <p class="section-note">Book amounts from the summary file. Meals and entertainment keep the full amount, with the half that is generally deductible for income tax shown beside it.</p>
+        <div class="card" id="categories"></div>
+      </section>
+
+      <section>
+        <h2>Income and expenses by month</h2>
+        <p class="section-note">Book income and expenses. Cash timing can differ, and it is shown separately below.</p>
+        <div class="card" id="trend"></div>
+      </section>
+
+      <section class="grid-2">
+        <article class="card" id="vendors"></article>
+        <article class="card" id="customers"></article>
+      </section>
+
+      <section class="grid-2">
+        <article class="card" id="cash"></article>
+        <article class="card" id="receivables"></article>
+      </section>
+
+      <section class="grid-2">
+        <article class="card" id="review"></article>
+        <article class="card" id="receipts"></article>
+      </section>
+
+      <section>
+        <h2>Upcoming deadlines</h2>
+        <p class="section-note">Reminders for a corporation with this fiscal year-end. Weekend and holiday dates move to the next business day. This does not file anything with the CRA and it is not tax advice.</p>
+        <div id="deadlines" class="grid-2"></div>
+      </section>
+
+      <footer>
+        <p id="footer-built"></p>
+        <p>Amounts are Canadian dollars, to the cent. Summaries are sealed into this page when it is built. The page does not contact a server. The tax set-aside is a planning estimate, not tax payable.</p>
+      </footer>
+    </div>
+
+    <script type="application/json" id="category-list">__CATEGORIES_JSON__</script>
+    <script type="application/json" id="dashboard-data">__DASHBOARD_JSON__</script>
+    <script>
+      "use strict";
+      __DEADLINES_JS__
+
+      const DATA = JSON.parse(document.getElementById("dashboard-data").textContent);
+      const CATEGORY_NAMES = JSON.parse(document.getElementById("category-list").textContent);
+      const PIE_COLORS = [
+        "#0e6b5c", "#c46b4a", "#1f4e79", "#c2a15a", "#6b4c7a",
+        "#3d7a5a", "#a33b4a", "#4d6d8a", "#8a6a3b", "#2f6f6a",
+        "#b85c38", "#5c5270", "#3e7c4a", "#8d4e63", "#3a5f7d",
+        "#6e8b3d", "#9a5b2f", "#4a6670", "#7a4e2d",
+      ];
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const MEALS = "Meals and entertainment (50%)";
+
+      function cents(value) {
+        return Math.round(Number(value) * 100);
+      }
+
+      function fromCents(value) {
+        return value / 100;
+      }
+
+      function sub(a, b) {
+        return fromCents(cents(a) - cents(b));
+      }
+
+      function applyRate(amount, rate) {
+        const rateUnits = Math.round(rate * 10000);
+        return fromCents(Math.round((cents(amount) * rateUnits) / 10000));
+      }
+
+      function half(amount) {
+        return fromCents(Math.round(cents(amount) / 2));
+      }
+
+      function sum(values) {
+        return fromCents(values.reduce((total, value) => total + cents(value), 0));
+      }
+
+      function money(value) {
+        const negative = cents(value) < 0;
+        const absolute = Math.abs(cents(value));
+        const whole = Math.floor(absolute / 100);
+        const fraction = String(absolute % 100).padStart(2, "0");
+        const grouped = String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return (negative ? "-" : "") + "$" + grouped + "." + fraction;
+      }
+
+      function csvAmount(value) {
+        const negative = cents(value) < 0;
+        const absolute = Math.abs(cents(value));
+        const whole = Math.floor(absolute / 100);
+        const fraction = String(absolute % 100).padStart(2, "0");
+        return (negative ? "-" : "") + whole + "." + fraction;
+      }
+
+      function formatPercent(rate) {
+        const units = Math.round(rate * 10000);
+        const whole = Math.floor(units / 100);
+        const fraction = String(units % 100).padStart(2, "0").replace(/0$/, "").replace(/0$/, "");
+        return fraction ? whole + "." + fraction + "%" : whole + "%";
+      }
+
+      function niceCeiling(value) {
+        if (value <= 0) return 1;
+        const padded = value * 1.08;
+        const magnitude = 10 ** Math.floor(Math.log10(padded));
+        const fraction = padded / magnitude;
+        const steps = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+        const nice = steps.find((step) => step >= fraction - 1e-9) || 10;
+        return nice * magnitude;
+      }
+
+      function axisMoney(value) {
+        const rounded = Math.round(value);
+        if (rounded >= 1000000) return "$" + (rounded / 1000000).toFixed(1) + "M";
+        if (rounded >= 10000) return "$" + Math.round(rounded / 1000) + "k";
+        if (rounded >= 1000) {
+          const thousands = rounded / 1000;
+          return "$" + thousands.toFixed(rounded % 1000 === 0 ? 0 : 1) + "k";
+        }
+        return "$" + rounded;
+      }
+
+      function todayISO() {
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        return now.getFullYear() + "-" + month + "-" + day;
+      }
+
+      function tone(value) {
+        if (cents(value) > 0) return "pos";
+        if (cents(value) < 0) return "neg";
+        return "";
+      }
+
+      function el(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text != null) node.textContent = text;
+        return node;
+      }
+
+      function svgEl(tag, attrs) {
+        const node = document.createElementNS(SVG_NS, tag);
+        Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
+        return node;
+      }
+
+      function statRow(label, amount, options) {
+        const row = el("div", "stat" + (options && options.net ? " net" : ""));
+        row.append(el("span", null, label));
+        const className = options && options.tone ? "num " + options.tone : "num";
+        row.append(el("strong", className, money(amount)));
+        return row;
+      }
+
+      function categories() {
+        const amounts = new Map(DATA.expensesByCategory.map((row) => [row.category, row.amount]));
+        return CATEGORY_NAMES.map((category, index) => ({
+          category,
+          amount: amounts.has(category) ? amounts.get(category) : 0,
+          color: PIE_COLORS[index % PIE_COLORS.length],
+        }));
+      }
+
+      function model() {
+        const rows = categories();
+        const ytdNet = sub(DATA.periods.yearToDate.income, DATA.periods.yearToDate.expenses);
+        const setAsideBase = ytdNet > 0 ? ytdNet : 0;
+        return {
+          rows,
+          expenseTotal: sum(rows.map((row) => row.amount)),
+          ytdNet,
+          setAsideBase,
+          setAside: applyRate(setAsideBase, DATA.taxSetAsideRate),
+          hstNet: sub(DATA.hst.collected, DATA.hst.itcs),
+          cashNet: sub(DATA.cashFlow.inflows, DATA.cashFlow.outflows),
+          receivablesTotal: sum(DATA.receivables.map((row) => row.amount)),
+          months: DATA.monthly.slice().sort((a, b) => a.month.localeCompare(b.month)),
+          deadlines: buildDeadlines(DATA.fiscalYearEnd, todayISO(), DATA.hstFilingFrequency),
+        };
+      }
+
+      function renderPeriods(snapshot) {
+        const host = document.getElementById("periods");
+        const blocks = [
+          ["Month to date", DATA.periods.monthToDate],
+          ["Quarter to date", DATA.periods.quarterToDate],
+          ["Year to date", DATA.periods.yearToDate],
+        ];
+        blocks.forEach(([label, period]) => {
+          const card = el("article", "card");
+          card.append(el("h3", "period-label", label));
+          card.append(statRow("Income", period.income));
+          card.append(statRow("Expenses", period.expenses));
+          const net = sub(period.income, period.expenses);
+          card.append(statRow("Net profit", net, { net: true, tone: tone(net) }));
+          if (cents(period.income) === 0 && cents(period.expenses) === 0) {
+            card.append(el("p", "empty", "No data yet"));
+          }
+          host.append(card);
+        });
+      }
+
+      function renderHst(snapshot) {
+        const host = document.getElementById("hst-card");
+        host.append(el("h2", null, "HST"));
+        host.append(el("p", "muted-note", "Ontario HST at " + formatPercent(DATA.hstRate) + ". Input tax credits are the HST paid."));
+        host.append(statRow("HST collected", DATA.hst.collected));
+        host.append(statRow("HST paid (ITCs)", DATA.hst.itcs));
+        host.append(statRow("Net HST", snapshot.hstNet, { net: true, tone: tone(snapshot.hstNet) }));
+        let sentence = "Net HST is $0.00. Nothing is owing and no refund is indicated.";
+        if (cents(snapshot.hstNet) > 0) {
+          sentence = "Net HST owing to the CRA is " + money(snapshot.hstNet) + ". A positive balance means the business owes the CRA.";
+        } else if (cents(snapshot.hstNet) < 0) {
+          sentence = "Net HST is a refund of " + money(Math.abs(snapshot.hstNet)) + ". A negative balance means a refund.";
+        }
+        host.append(el("p", "muted-note", sentence));
+        if (cents(DATA.hst.collected) === 0 && cents(DATA.hst.itcs) === 0) {
+          host.append(el("p", "empty", "No data yet"));
+        }
+      }
+
+      function renderTax(snapshot) {
+        const host = document.getElementById("tax-card");
+        const rate = formatPercent(DATA.taxSetAsideRate);
+        host.append(el("h2", null, "Estimated tax set-aside"));
+        host.append(el("p", "muted-note", rate + " of year-to-date net profit."));
+        host.append(statRow("Set aside", snapshot.setAside, { net: true, tone: tone(snapshot.setAside) }));
+        const profit = "Year-to-date net profit is " + money(snapshot.ytdNet) + ".";
+        const formula = cents(snapshot.ytdNet) > 0
+          ? " The estimate is " + money(snapshot.setAsideBase) + " × " + rate + "."
+          : " Net profit is not positive, so the set-aside is $0.00.";
+        host.append(el("p", "muted-note", profit + formula + " This is a planning estimate, not tax payable."));
+        if (cents(snapshot.setAside) === 0 && cents(snapshot.ytdNet) === 0) {
+          host.append(el("p", "empty", "No data yet"));
+        }
+      }
+
+      function renderCategories(snapshot) {
+        const host = document.getElementById("categories");
+        const layout = el("div", "cat-layout");
+        const positive = snapshot.rows.filter((row) => cents(row.amount) > 0);
+        const chart = el("div");
+        if (!positive.length) {
+          const empty = el("div", "empty-donut", "No data yet");
+          empty.setAttribute("role", "img");
+          empty.setAttribute("aria-label", "No expense data yet");
+          chart.append(empty);
+        } else {
+          const wrap = el("div", "donut-wrap");
+          const svg = svgEl("svg", { viewBox: "0 0 200 200", role: "img" });
+          const title = svgEl("title", {});
+          title.textContent = "Expense breakdown by category";
+          svg.append(title);
+          const circumference = 2 * Math.PI * 70;
+          let offset = 0;
+          positive.forEach((row) => {
+            const length = (row.amount / snapshot.expenseTotal) * circumference;
+            svg.append(svgEl("circle", {
+              cx: 100,
+              cy: 100,
+              r: 70,
+              fill: "none",
+              stroke: row.color,
+              "stroke-width": 28,
+              "stroke-dasharray": length + " " + (circumference - length),
+              "stroke-dashoffset": -offset,
+              transform: "rotate(-90 100 100)",
+            }));
+            offset += length;
+          });
+          wrap.append(svg);
+          const center = el("div", "donut-center");
+          center.append(el("strong", null, money(snapshot.expenseTotal)));
+          center.append(el("span", null, "Expenses"));
+          wrap.append(center);
+          chart.append(wrap);
+        }
+        layout.append(chart);
+
+        const list = el("div");
+        const max = Math.max(...snapshot.rows.map((row) => Math.max(row.amount, 0)), 0);
+        snapshot.rows.forEach((row) => {
+          const item = el("div", "cat");
+          const swatch = el("span", "swatch");
+          swatch.style.background = row.color;
+          const copy = el("div", "cat-copy");
+          const top = el("div", "cat-top");
+          top.append(el("span", "name", row.category));
+          const share = snapshot.expenseTotal > 0
+            ? (Math.round((row.amount / snapshot.expenseTotal) * 1000) / 10).toFixed(1).replace(/\.0$/, "")
+            : "0";
+          const amountText = money(row.amount) + (positive.length ? " · " + share + "%" : "");
+          top.append(el("strong", "num", amountText));
+          const track = el("div", "track");
+          const fill = el("div", "fill");
+          fill.style.width = max > 0 ? (Math.max(row.amount, 0) / max) * 100 + "%" : "0%";
+          track.append(fill);
+          copy.append(top, track);
+          if (row.category === MEALS) {
+            copy.append(el("small", null, "Deductible portion for income tax is generally half: " + money(half(row.amount)) + "."));
+          }
+          item.append(swatch, copy);
+          list.append(item);
+        });
+        layout.append(list);
+        host.append(layout);
+      }
+
+      function renderTrend(snapshot) {
+        const host = document.getElementById("trend");
+        if (!snapshot.months.length) {
+          host.append(el("p", "empty", "No data yet"));
+          return;
+        }
+        const width = 640;
+        const height = 280;
+        const pad = { l: 56, r: 12, t: 16, b: 36 };
+        const innerW = width - pad.l - pad.r;
+        const innerH = height - pad.t - pad.b;
+        const peak = Math.max(...snapshot.months.flatMap((month) => [month.income, month.expenses]), 0);
+        const yMax = niceCeiling(peak);
+        const xAt = (index) =>
+          snapshot.months.length === 1 ? pad.l + innerW / 2 : pad.l + (innerW * index) / (snapshot.months.length - 1);
+        const yAt = (value) => pad.t + innerH - (value / yMax) * innerH;
+        const svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img" });
+        const title = svgEl("title", {});
+        title.textContent = "Monthly income and expenses";
+        svg.append(title);
+        for (let step = 0; step <= 3; step += 1) {
+          const value = (yMax * step) / 3;
+          const y = yAt(value);
+          svg.append(svgEl("line", {
+            x1: pad.l, x2: width - pad.r, y1: y, y2: y, stroke: "#e4dccb", "stroke-width": 1,
+          }));
+          const label = svgEl("text", {
+            x: pad.l - 8, y: y + 4, "text-anchor": "end", fill: "#5e6a63", "font-size": 11,
+          });
+          label.textContent = axisMoney(value);
+          svg.append(label);
+        }
+        const pathFor = (key) => snapshot.months.map((month, index) => {
+          return (index === 0 ? "M" : "L") + xAt(index).toFixed(1) + " " + yAt(month[key]).toFixed(1);
+        }).join(" ");
+        svg.append(svgEl("path", {
+          d: pathFor("income"), fill: "none", stroke: "#0e6b5c", "stroke-width": 2.5,
+          "stroke-linejoin": "round", "stroke-linecap": "round",
+        }));
+        svg.append(svgEl("path", {
+          d: pathFor("expenses"), fill: "none", stroke: "#a33b4a", "stroke-width": 2.5,
+          "stroke-linejoin": "round", "stroke-linecap": "round",
+        }));
+        snapshot.months.forEach((month, index) => {
+          svg.append(svgEl("circle", { cx: xAt(index), cy: yAt(month.income), r: 3.5, fill: "#0e6b5c" }));
+          svg.append(svgEl("circle", { cx: xAt(index), cy: yAt(month.expenses), r: 3.5, fill: "#a33b4a" }));
+          const label = svgEl("text", {
+            x: xAt(index), y: height - 12, "text-anchor": "middle", fill: "#5e6a63",
+            "font-size": snapshot.months.length > 8 ? 10 : 12,
+          });
+          label.textContent = MONTH_NAMES[Number(month.month.slice(5)) - 1].slice(0, 3);
+          svg.append(label);
+        });
+        const frame = el("div", "chart");
+        frame.append(svg);
+        host.append(frame);
+        const legend = el("div", "legend");
+        const incomeKey = el("span");
+        incomeKey.append(el("i"));
+        incomeKey.querySelector("i").style.background = "#0e6b5c";
+        incomeKey.append("Income");
+        const expenseKey = el("span");
+        expenseKey.append(el("i"));
+        expenseKey.querySelector("i").style.background = "#a33b4a";
+        expenseKey.append("Expenses");
+        legend.append(incomeKey, expenseKey);
+        host.append(legend);
+
+        snapshot.months.forEach((month) => {
+          const row = el("div", "month-row");
+          row.append(el("strong", null, formatMonth(month.month)));
+          row.append(el("span", null, "Income " + money(month.income)));
+          row.append(el("span", null, "Expenses " + money(month.expenses)));
+          row.append(el("span", null, "Net " + money(sub(month.income, month.expenses))));
+          host.append(row);
+        });
+      }
+
+      function renderRanked(id, title, note, rows) {
+        const host = document.getElementById(id);
+        host.append(el("h2", null, title));
+        host.append(el("p", "muted-note", note));
+        if (!rows.length) {
+          host.append(el("p", "empty", "No data yet"));
+          return;
+        }
+        const list = el("ol", "ranked");
+        rows.slice().sort((a, b) => cents(b.amount) - cents(a.amount)).forEach((row, index) => {
+          const item = el("li");
+          item.append(el("span", "rank", String(index + 1)));
+          item.append(el("span", "rank-label", row.label));
+          item.append(el("strong", "num", money(row.amount)));
+          list.append(item);
+        });
+        host.append(list);
+      }
+
+      function renderCash(snapshot) {
+        const host = document.getElementById("cash");
+        host.append(el("h2", null, "Cash flow and bank balance"));
+        host.append(el("p", "muted-note", "Summary balance only. Account numbers are not stored."));
+        host.append(statRow("Bank balance", DATA.cashFlow.bankBalance, { net: true }));
+        host.append(statRow("Inflows", DATA.cashFlow.inflows));
+        host.append(statRow("Outflows", DATA.cashFlow.outflows));
+        host.append(statRow("Net cash flow", snapshot.cashNet, { net: true, tone: tone(snapshot.cashNet) }));
+        if (
+          cents(DATA.cashFlow.bankBalance) === 0 &&
+          cents(DATA.cashFlow.inflows) === 0 &&
+          cents(DATA.cashFlow.outflows) === 0
+        ) {
+          host.append(el("p", "empty", "No data yet"));
+        }
+      }
+
+      function renderReceivables(snapshot) {
+        const host = document.getElementById("receivables");
+        const head = el("div", "card-head");
+        head.append(el("h2", null, "Outstanding invoices"));
+        head.append(el("span", "count", String(DATA.receivables.length)));
+        host.append(head);
+        host.append(statRow("Receivables", snapshot.receivablesTotal, { net: true }));
+        if (!DATA.receivables.length) {
+          host.append(el("p", "empty", "No data yet"));
+          return;
+        }
+        const today = todayISO();
+        DATA.receivables.slice().sort((a, b) => a.dueOn.localeCompare(b.dueOn)).forEach((row) => {
+          const item = el("div", "dl");
+          const copy = el("div");
+          const title = el("div", "dl-title-row");
+          title.append(el("strong", null, row.reference));
+          title.append(el("span", "pill " + row.status, row.status));
+          if ((row.status === "open" || row.status === "partial") && row.dueOn < today) {
+            title.append(el("span", "pill overdue", "Overdue"));
+          }
+          copy.append(title);
+          copy.append(el("p", "muted-note", row.description));
+          copy.append(el("p", "muted-note", "Issued " + formatLongDate(row.issuedOn)));
+          item.append(copy);
+          const due = el("div");
+          due.append(el("strong", "num", money(row.amount)));
+          const time = el("time", null, "Due " + formatLongDate(row.dueOn));
+          time.dateTime = row.dueOn;
+          due.append(time);
+          item.append(due);
+          host.append(item);
+        });
+      }
+
+      function renderIssues(id, title, items) {
+        const host = document.getElementById(id);
+        const head = el("div", "card-head");
+        head.append(el("h2", null, title));
+        head.append(el("span", "count", String(items.length)));
+        host.append(head);
+        if (!items.length) {
+          host.append(el("p", "empty", "No data yet"));
+          return;
+        }
+        const list = el("ul", "plain");
+        items.forEach((item) => {
+          const li = el("li");
+          li.append(el("p", "item-title", item.description));
+          const meta = [];
+          if (item.date) meta.push(formatLongDate(item.date));
+          if (Object.prototype.hasOwnProperty.call(item, "amount")) meta.push(money(item.amount));
+          if (meta.length) li.append(el("p", "muted-note", meta.join(" · ")));
+          list.append(li);
+        });
+        host.append(list);
+      }
+
+      function renderDeadlines(snapshot) {
+        const upcoming = snapshot.deadlines
+          .filter((row) => row.status !== "passed")
+          .sort((a, b) => a.due.localeCompare(b.due));
+        const banner = document.getElementById("next-deadline");
+        banner.append(el("p", "eyebrow", "Next deadline"));
+        if (!upcoming.length) {
+          banner.append(el("p", "banner-date", "No remaining deadlines"));
+          banner.append(el("p", null, "Nothing in this fiscal year is still ahead."));
+        } else {
+          banner.append(el("p", "banner-date", upcoming[0].title));
+          banner.append(el("p", null, formatLongDate(upcoming[0].due)));
+        }
+        const nextKey = upcoming.length ? upcoming[0].group + "|" + upcoming[0].title : "";
+        const groups = [
+          ["hst", "HST", "Dates follow the filing frequency in the data file. Annual filing is the default for this dashboard."],
+          ["installmentQuarterly", "Quarterly corporate tax installments", "Eligible CCPCs may use these quarter-end dates. Pay installments only when the CRA requires them."],
+          ["installmentMonthly", "Monthly corporate tax installments", "Corporations that must pay monthly have a payment on the last day of each month."],
+          ["t2", "T2 return", "The corporate return is due six months after the fiscal year-end."],
+          ["balance", "Balance of corporate tax", "The balance is due before the T2 filing date. Interest runs after the balance-due date that applies."],
+        ];
+        const host = document.getElementById("deadlines");
+        groups.forEach(([group, title, note]) => {
+          const card = el("article", "card");
+          card.append(el("h3", null, title));
+          card.append(el("p", "muted-note group-note", note));
+          const rows = snapshot.deadlines.filter((row) => row.group === group);
+          const active = rows.filter((row) => row.status !== "passed");
+          const passed = rows.filter((row) => row.status === "passed");
+          const draw = (row) => {
+            const item = el("div", "dl" + (group + "|" + row.title === nextKey ? " is-next" : ""));
+            const copy = el("div");
+            const heading = el("div", "dl-title-row");
+            heading.append(el("strong", null, row.title));
+            if (group + "|" + row.title === nextKey) heading.append(el("span", "pill next", "Next"));
+            const statusLabel = row.status === "today" ? "Due today" : row.status === "passed" ? "Passed" : "Upcoming";
+            heading.append(el("span", "pill " + row.status, statusLabel));
+            copy.append(heading);
+            copy.append(el("p", "muted-note", row.detail));
+            item.append(copy);
+            const time = el("time", null, formatLongDate(row.due));
+            time.dateTime = row.due;
+            item.append(time);
+            return item;
+          };
+          if (!active.length && !passed.length) {
+            card.append(el("p", "empty", "No data yet"));
+          } else {
+            active.forEach((row) => card.append(draw(row)));
+            if (!active.length) card.append(el("p", "muted-note", "No upcoming date in this group."));
+            if (passed.length) {
+              const details = el("details");
+              details.append(el("summary", null, "Passed dates (" + passed.length + ")"));
+              passed.forEach((row) => details.append(draw(row)));
+              card.append(details);
+            }
+          }
+          host.append(card);
+        });
+      }
+
+      function csvEscape(value) {
+        const text = String(value == null ? "" : value);
+        if (/[",\r\n]/.test(text)) return '"' + text.replace(/"/g, '""') + '"';
+        return text;
+      }
+
+      function download(filename, rows) {
+        const csv = rows.map((row) => row.map(csvEscape).join(",")).join("\r\n") + "\r\n";
+        const blob = new Blob(["\ufeff", csv], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function ledgerRows(snapshot) {
+        const rows = [
+          ["section", "item", "amount_cad", "notes"],
+          ["business", "name", "", DATA.businessName],
+          ["business", "currency", "", DATA.currency],
+          ["business", "province", "", DATA.province],
+          ["business", "fiscal year end", "", DATA.fiscalYearEnd],
+        ];
+        const periods = [
+          ["month to date", DATA.periods.monthToDate],
+          ["quarter to date", DATA.periods.quarterToDate],
+          ["year to date", DATA.periods.yearToDate],
+        ];
+        periods.forEach(([label, period]) => {
+          rows.push(["period", label + " income", csvAmount(period.income), ""]);
+          rows.push(["period", label + " expenses", csvAmount(period.expenses), ""]);
+          rows.push(["period", label + " net profit", csvAmount(sub(period.income, period.expenses)), "Income minus expenses"]);
+        });
+        rows.push(["hst", "collected", csvAmount(DATA.hst.collected), ""]);
+        rows.push(["hst", "itcs", csvAmount(DATA.hst.itcs), "HST paid"]);
+        rows.push(["hst", "net", csvAmount(snapshot.hstNet), "Positive means owing to the CRA; negative means a refund"]);
+        snapshot.rows.forEach((row) => {
+          const note = row.category === MEALS ? "Book amount. Deductible portion is generally half: " + csvAmount(half(row.amount)) : "";
+          rows.push(["category", row.category, csvAmount(row.amount), note]);
+        });
+        snapshot.months.forEach((month) => {
+          rows.push(["month", month.month + " income", csvAmount(month.income), ""]);
+          rows.push(["month", month.month + " expenses", csvAmount(month.expenses), ""]);
+        });
+        DATA.topVendors.forEach((row) => rows.push(["vendor", row.label, csvAmount(row.amount), "Anonymized or category label"]));
+        DATA.topCustomers.forEach((row) => rows.push(["customer", row.label, csvAmount(row.amount), "Anonymized or category label"]));
+        rows.push(["cash", "bank balance", csvAmount(DATA.cashFlow.bankBalance), "Summary balance only"]);
+        rows.push(["cash", "inflows", csvAmount(DATA.cashFlow.inflows), ""]);
+        rows.push(["cash", "outflows", csvAmount(DATA.cashFlow.outflows), ""]);
+        rows.push(["cash", "net cash flow", csvAmount(snapshot.cashNet), ""]);
+        rows.push(["receivables", "total outstanding", csvAmount(snapshot.receivablesTotal), ""]);
+        rows.push(["receivables", "count", String(DATA.receivables.length), ""]);
+        DATA.receivables.forEach((row) => {
+          rows.push(["invoice", row.reference, csvAmount(row.amount), row.status + " due " + row.dueOn + " — " + row.description]);
+        });
+        rows.push(["needs review", "count", String(DATA.needsReview.length), ""]);
+        DATA.needsReview.forEach((row) => {
+          rows.push(["needs review", row.description, "amount" in row ? csvAmount(row.amount) : "", row.date || ""]);
+        });
+        rows.push(["missing receipts", "count", String(DATA.missingReceipts.length), ""]);
+        DATA.missingReceipts.forEach((row) => {
+          rows.push(["missing receipt", row.description, "amount" in row ? csvAmount(row.amount) : "", row.date || ""]);
+        });
+        rows.push(["tax set-aside", "rate", String(DATA.taxSetAsideRate), "Share of positive year-to-date net profit"]);
+        rows.push(["tax set-aside", "amount", csvAmount(snapshot.setAside), "Planning estimate, not tax payable"]);
+        return rows;
+      }
+
+      function hstRows(snapshot) {
+        const rows = [
+          ["item", "amount_cad", "notes"],
+          ["business", "", DATA.businessName],
+          ["currency", "", DATA.currency],
+          ["hst rate", String(DATA.hstRate), "Ontario HST"],
+          ["filing frequency", "", DATA.hstFilingFrequency],
+          ["fiscal year end", "", DATA.fiscalYearEnd],
+          ["HST collected", csvAmount(DATA.hst.collected), "On taxable supplies"],
+          ["input tax credits", csvAmount(DATA.hst.itcs), "HST paid"],
+          ["net HST", csvAmount(snapshot.hstNet), "Positive means owing to the CRA; negative means a refund"],
+          [],
+          ["month", "income_cad", "expenses_cad", "hst_collected_cad", "hst_itcs_cad"],
+        ];
+        if (!snapshot.months.length) {
+          rows.push(["No data yet", "", "", "", ""]);
+        } else {
+          snapshot.months.forEach((month) => {
+            rows.push([
+              month.month,
+              csvAmount(month.income),
+              csvAmount(month.expenses),
+              "hstCollected" in month ? csvAmount(month.hstCollected) : "",
+              "hstItcs" in month ? csvAmount(month.hstItcs) : "",
+            ]);
+          });
+        }
+        return rows;
+      }
+
+      function render() {
+        const snapshot = model();
+        document.title = DATA.businessName + " finance dashboard";
+        document.getElementById("business-name").textContent = DATA.businessName;
+        document.getElementById("eyebrow").textContent = "Ontario · " + DATA.currency + " · " + formatPercent(DATA.hstRate) + " HST";
+        document.getElementById("lede").textContent = "Fiscal year ending " + formatLongDate(DATA.fiscalYearEnd) + ". All amounts in CAD, to the cent.";
+        const built = document.querySelector('meta[name="built-at"]').content;
+        document.getElementById("footer-built").textContent = "Page built " + built + ".";
+        renderPeriods(snapshot);
+        renderHst(snapshot);
+        renderTax(snapshot);
+        renderCategories(snapshot);
+        renderTrend(snapshot);
+        renderRanked("vendors", "Top vendors", "Category or anonymized labels only. Names are not stored.", DATA.topVendors);
+        renderRanked("customers", "Top customers", "Category or anonymized labels only. Names are not stored.", DATA.topCustomers);
+        renderCash(snapshot);
+        renderReceivables(snapshot);
+        renderIssues("review", "Needs review", DATA.needsReview);
+        renderIssues("receipts", "Missing receipts", DATA.missingReceipts);
+        renderDeadlines(snapshot);
+        document.getElementById("download-ledger").addEventListener("click", () => {
+          download("legacy4sports-ledger-summary.csv", ledgerRows(snapshot));
+        });
+        document.getElementById("download-hst").addEventListener("click", () => {
+          download("legacy4sports-hst-report.csv", hstRows(snapshot));
+        });
+      }
+
+      render();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+# Dependencies and plaintext build output
+node_modules/
+.build/
+decrypted/
+encrypted/
+
+# Private books. Commit data/dashboard-data.example.json only.
+data/dashboard-data.json
+
+# Secrets and local StatiCrypt config
+.env
+.env.*
+.staticrypt.json
+
+# OS / editor
+.DS_Store
